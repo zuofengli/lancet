@@ -1,0 +1,29 @@
+Aspirin at a dose of 50 mg/kg body weight was found to decrease the
+      activity of the rat intestinal brush border membrane (BBM) - associated
+      enzymes such as the sucrase, lactase, maltase and alkaline phosphatase.
+      Aspirin treatment also led to a decrease in the microviscosity in the
+      native as well as the benzyl alcohol treated membrane which might be due
+      to the lipid peroxidative damage in the membrane. Physical correlation of
+      the membrane oxidative damage was evident as the Fourier Transformation
+      Infra Red (FTIR) study of the Aspirin treated membrane, which include an
+      increased proportion of gauche to trans conformer, shift in the methylene
+      C-H asymmetric and symmetric stretching frequencies, C = O double bond
+      stretching, NH bending, antisymmetric (N)-CH3 bending, C-N stretching and
+      antisymmetric CNC stretching while there was no change in the CH2 wagging
+      and twisting as well as in NH-bending amide bond I and II. Aspirin
+      treatment also caused an alteration in the glucose and histidine
+      transport, as evident by a decreased Vmax value while the apparent Km
+      remaining unchanged in the control and Aspirin-treated animals confirming
+      that there was no change in the substrate affinity constant of the
+      membrane transport proteins for the glucose and the basic amino acid,
+      although the rate of transport decreased considerably. There was a
+      decrease noted in the energy of activation of glucose and histidine
+      transport when studied at different temperature but no change in the
+      temperature of phase transition in the BBM with Aspirin treatment, thus
+      implying that perhaps the thermotropic phase transition in the membrane
+      may have relatively little effect on the transport processes. The result
+      suggests an underlying molecular mechanism indicating the implied membrane
+      damage by Aspirin, an important member of the non-steroidal
+      antiinflammatory drug (NSAID) family which could possibly through an
+      oxidative damage may lead to an altered molecular structure, physical
+      state and biological functions of the intestinal membrane.

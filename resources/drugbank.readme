@@ -1,0 +1,40 @@
+Delete all of the record with the length less than or equal to two.
+^([A-Z])([A-Z])([A-Z])([A-Z])([A-Z])\t(.*)$
+^([A-Z])(A-Z)([A-Z])([A-Z]))\t(.*)$
+^([A-Z])(.)([A-Z])([A-Z])\t(.*)$
+^(.)(.)(.)(.)\t(.*)\tBrand_names$
+Line 48: AA	drugBank00126	Synonyms
+	Line 1735: PL	drugBank00147	Synonyms
+	Line 1822: TC	drugBank00759	Synonyms
+	Line 6003: EO	drugBank00977	Synonyms
+	Line 6376: 2%	drugBank01026	Synonyms
+	Line 11162: FU	drugBank00544	Brand_Names
+	Line 11573: CB	drugBank00411	Brand_Names
+	Line 12800: EE	drugBank00977	Synonyms
+	Line 13637: PN	drugBank00165	Synonyms
+	Line 14567: ms	drugBank00295	RxList_Link
+	Line 15417: HU	drugBank01005	Synonyms
+	Line 15688: CP	drugBank00531	Brand_Names
+	Line 16142: PS	drugBank00144	Synonyms
+	Line 16199: MD	drugBank00902	Synonyms
+	Line 16766: JM	drugBank01321	Synonyms
+	Line 17323: NG	drugBank00727	Synonyms
+	Line 17615: DA	drugBank00988	Synonyms
+	Line 17808: CC	drugBank00169	Synonyms
+	Line 20046: CD	drugBank00205	Synonyms
+	Line 20123: DV	drugBank00890	Brand_Names
+	Line 20194: EM	drugBank00199	Synonyms
+	Line 20225: ET	drugBank00609	Synonyms
+	Line 20917: PA	drugBank00085	Synonyms
+	Line 22035: AD	drugBank00970	Synonyms
+	Line 24277: NO	drugBank00435	Brand_Names
+	Line 25380: AB	drugBank00420	Brand_Names
+	Line 25646: SI	drugBank00263	Brand_Names
+	Line 26156: IM	drugBank00458	Brand_Names
+	Line 26182: NF	drugBank00336	Synonyms
+	Line 28875: DT	drugBank00004	Synonyms
+	Line 30418: SA	drugBank00936	Synonyms
+	Line 30653: MP	drugBank01033	Synonyms
+	Line 30756: TG	drugBank00352	Synonyms
+	Line 31316: GH	drugBank00052	Synonyms
+	Line 31573: CY	drugBank00531	Brand_Names

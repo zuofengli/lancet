@@ -1,0 +1,6 @@
+There is something wrong with gzip in splitta. The code is changed to file read. The pkl here is unziped one
+
+#in util.py
+
+    #i = gzip.open(path, 'rb')
+    i = open(path, "r")

@@ -1,0 +1,255 @@
+---
+trumps: [{ trumper: drug, trumpee: possibleDrug },
+         { trumper: date, trumpee: number }
+        ]    # if there's overlap, get rid of trumpee
+nonTerminals:
+    # any string of alpha characters here will get replaced with terminal patterns (except things like \s)
+    # for nonTerminals make don't worry about closing parens, they will be added
+    # other than that, these are normal regular expressions (there will be extra parens around some stuff)
+    - name: date
+      patterns:
+        - '(validDate|possibleDate)'
+    - name: dateRange
+      patterns:
+        - '(openParen)(date)((dash)(date)?)?closeParen'
+        - '(date)((dash)(date)?)?'
+    - name: numberRange
+      patterns:
+        - number ?- ?number
+        - writtenNumber to writtenNumber
+        - writtenNumber ?- ?writtenNumber
+    - name: howLong
+      patterns:
+        - '(x|for)\s*((number|writtenNumber|numberRange)\s*period)'
+    - name: simpleFreq
+      patterns:
+        - 'every\s*period'                            # q. day
+        - 'every\s*(number(-number)?)?\s*(period)?'   # e.g., every day, every 3 days, every 2-4 days
+        - 'howManyTimes\s+periodAdj'                  # e.g., twice daily
+        - 'howManyTimes\s+per\s+period'               # e.g., twice each day
+        #- howOften                                    # e.g., bid
+        - periodAdj                                   # e.g., daily
+        - howLong                                     # e.g., for five days
+        - otherFreq                                   # ad lib
+        - 'every\s*(number(-number)?)\s*()'
+    - name: prn
+      patterns:
+        - asNeeded
+        - 'asNeeded\s*qualifier'
+        - '(cond|asNeeded)'
+        #- '(cond|asNeeded)(\s*qualifier)?'        
+    - name: freq
+      patterns:
+        - 'simpleFreq\s+(timeOfDay)'   #q.10 p.m.
+        - 'simpleFreq(\s+timeOfDay)?(\s+howLong)?(\s+asNeeded)?'
+        - eachTimeOfDay
+        - '(timeOfDay|howOften)(howLong)?(\s+prn)?'
+        ##- prn
+        - asNeeded
+        #- howLong
+        #- 'simpleFreq(\s+timeOfDay)?(\s+qualifier)?(\s+howLong)?'
+        #- '(qualifier\s+)?simpleFreq(\s+timeOfDay)?(\s+howLong)?'
+        #- '(timeOfDay|howOften)(qualifier)?(howLong)?'
+    - name: route
+      patterns:
+        - '(manner\s*(where)?)|where'
+#    - name: test
+#      patterns:
+#        - asNeeded
+#        - route
+
+    - name: instruct
+      patterns:
+        - '((route|freq|prn)\s*)+'
+        #- 'route\s*freq\s*prn'
+        #- 'route\s*freq(\s*prn)?'
+        #- 'route(\s*freq)?(\s*prn)?'
+        #- 'freq(\s*route)?(\s*prn)?'
+        #- '(freq\s*)?(route?\s*)prn'
+    - name: instructions
+      patterns:
+        - 'instruct(\s*dateRange)?'
+        - dateRange
+    - name: dose
+      patterns:
+        - '(number|writtenNumber)\s*unitOfMeasure?\s*(uncountableForm|countableForm)?'
+        - 'unitOfMeasure\s+uncountableForm'
+        - unitOfMeasure
+        - countableForm
+        - uncountableForm
+        - number
+    - name: doseOf
+      patterns:
+        - 'dose( of)?'
+    - name: reason
+      patterns:
+        - prn\s*medicalTerm #jd
+        - indicationPost((\w|\s)+)medicalTerm
+        - medicalTerm\s+indicationPre
+        - indicationStop\s+medicalTerm
+        - (\w+)emrReasonTag
+    - name: drugInfo
+      patterns:
+        - '(dose\s*)?instructions(\s*reason)'#jd
+        - 'dose(\s*instructions)?'
+        - '(dose\s*)?instructions'
+    - name: duration
+      patterns:
+        - '(x|for)\s*(number|writtenNumber|numberRange)\s*period'
+        - 'howManyTimes\s*(number|writtenNumber|numberRange)\s*dose'
+        - 'durationTrigger\s+(\w+)sentenceBoundary'   
+    - name: drug
+      patterns:
+        - 'drugname(\s+dose)(\s+route)(\s+freq)'#<drug>novolog </drug>sliding scale subcutaneous q.a.c. mr. witucki will follow up
+        - 'drugname(\s+dose)(\s+freq)(\s*\W+\s*)?(\s*)for(.*)(\s+howLong)' #lasix </drug>40 mg b.i.d. , for three days along with potassium chloride
+        - 'reason(\s+With)(\s+drugname)(\s*route)?'#She showed evidence of fluid overload on admission of diuresis with IV Lasix 
+        - 'drugname(\s*route)?(\s*drugInfo)?'
+        - '(\s*route)?(\s*drugInfo)?drugname' #3 mcg of <drug>epinephrine
+        - 'doseOf\s*?drugname(\s*instructions)?'
+                #- 'drugname(\s+dose)?(\s+freq)?(\s+route)?(\s*dateRange)?'
+        #- 'drugname(\s+dose)?(\s+freq)?(\s+route)?(\s*dateRange)?'
+        #- '(dose\s+)?(route\s+)?drugname(\s+freq)?(\s*dateRange)?'
+        #- '(dose\s+)?(route\s+)?drugname(\s*dateRange)?(\s+freq)?'
+    - name: possibleDrug
+      patterns:
+#        - 'possibleDrugName(\s*drugInfo)'        too permissive
+        - 'possibleDrugName\s*dose\s*instructions'
+        - 'possibleDrugName\s*prn'
+        - 'treatedWith\s*possibleDrugName'
+        #- 'possibleDrugName(\s+dose|route|freq)+(\s*dateRange)?'
+        #- '(dose\s+)possibleDrugName(\s+route|freq)(\s*dateRange)?'
+        #- '(route\s+)possibleDrugName(\s+dose|freq)(\s*dateRange)?'
+    - name: context
+      patterns:
+        - contextClue
+    - name: compoundDrugName
+      patterns:
+        - 'drugname\s*(\w{2,5})?\s*\(\s*drugname((\W+))\(\s*(.*?) \)\s*\)'
+        - 'drugname\s*(\w{2,5})?\s*\(\s*drugname((\W+))\)'# D33DDDDDDDDDDDDDDDDD ( D34DDDDDDDDDDDDDDDDDDD/... )
+        - 'drugname\s*(\w{2,5})?\s*\(\s*drugname\s*\)'
+        - 'possibleDrugName\s*(\w{2,5})?\s*\(\s*drugname((\W+))\(\s*(.*?) \)\s*\)'
+        - 'drugname\s*(\w{2,5})?\s*\(\s*possibleDrugName((\W+))\(\s*(.*?) \)\s*\)'
+        - 'drugname\s*(\w{2,5})?\s*\(\s*possibleDrugName\s*\)'
+
+terminals:
+    # for terminals make sure to use closing parens where it might be
+    # dangerous to connect a pattern to another with |
+    durationTrigger:    ['through']
+    sentenceBoundary:   ['\.']
+    emrReasonTag:       ['/w']
+    drugname:           ['D\d+D+','D+']
+    medicalTerm:        ['T\d+T+','T+']
+    unitOfMeasure:      [g, gm, mg, ml, mcg, cc, megagram, microgram, milligram, meq, unit]
+                         # PROBLEM: these can be preceded by number without word boundary (solved yet?)
+    countableForm:      [tab, tablet, gtt, drop, puff, cap, amp, can]
+    uncountableForm:    [oint, ointment, ung, sol, solution, susp, suspension]
+    #uncountableForm:    [oint, ointment, ung, sol, solution, susp, suspension, inh, inhaler, neb, nebulizer]
+    of:                 [of]        # literal for dose of
+    to:                 [to]        # literal
+    x:                  [x]        # literal
+    for:                 [for]        # literal
+
+    manner:             [po, iv, drip, sl, npo, pgt, png, pnj, pr, top, trans, sc, sq, subcutaneous, subq, subcu, subcut,
+                         im, intramuscular, inh, inhaler, neb, nebulizer, patch, td, transdermal, intravenous, 'nasal cannula', 'na', inhale, 'iv injection', 'iv bolus', sublingual, 'by mouth', 'swish\s+and\s+swallow', '((intravenous|iv)\s+)?pca']
+    #manner:             [po, iv, drip, sl, npo, pgt, png, pnj, pr, top, trans, sc, sq, subcutaneous, subq, subcut, im, intramuscular]
+    where:              [ad, right ear, as, left ear, au, both ears, od, right eye, or, os, left eye, ou, both eyes]
+
+    eachTimeOfDay:      [qam, q\s*am, qpm, q\s*pm, qhs , qac]
+    timeOfDay:          [hs, at bedtime, stat, ac, before meals, ap, before dinner, pc, after meals, am, morning, pm, evening, afternoon]
+    period:             [hour, hr, h, day, d, week, wk, w, month, mo, year, yr, minute, min]
+    periodAdj:          [hourly, daily, weekly, monthly, yearly, nightly]
+
+    cond:               [ud, ut dict, prm-breakthrough, '(were|was) held', discontinued, "dc'd"]
+    asNeeded:           [prn, as needed]
+    #qualifier:          ['(for)?\s*(severe)?\s*pain']
+    qualifier:          ['(for)?\s*(severe)?\s*(pain|wheez\w*|agita[\w/]+)']
+
+    howManyTimes:       [once, twice, thrice, three times, four times]
+    per:                [per, a, each, every]
+    every:              [q, every, each]
+    howOften:           [qd, bid, tid, qid, qod, daily] #, '(q\.\d+\.h\.)', '(q\s?\d+)' ]
+    otherFreq:          ['ad lib\.?']
+    #howLong:            ['(x|for)\s*\d+(\s*-\s*\d+)?(\s*plus)?\s*(h|hr|hour|d|day|week|wk)s?']
+    number:             ['(((\d+{1,3},)+)(\d{3}))', '((?<!D)\d+(\.\d+)?(?!\d*D))']
+                          #  the first part of the number match says don't take numbers that start and end with Ds
+                          #    that's because I'm using strings like D123DDDD for temporary drug identifiers
+    writtenNumber:      [one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve]
+    #comaThousand:       ['\s+(((\d+{1,3}\,)+)?(\d{1,3}))\s+']
+    validDate:          ['(?<!\d)((((0?[13578]|1[02])\/(0?[1-9]|[12][0-9]|3[01]))|((0?[469]|11)\/(0?[1-9]|[12][0-9]|30))|0?2\/(0?[1-9]|[12][0-9]))(\/((19|20)?\d\d))?)(?!\d)']
+    #validDate:          ['(?<!\d)(((0?[13578]|1[02])\/(0?[1-9]|[12][0-9]|3[01]))|((0?[469]|11)\/(0?[1-9]|[12][0-9]|30))|0?2\/(0?[1-9]|[12][0-9]))(?!\d)']
+    possibleDate:       ['\d\d?\/\d\d?(\/(\d\d)?\d\d)?']
+    #possibleDate:       ['\d\d?\/\d\d?']
+    #possibleDateRange:  ['\(?\d\d?\/\d\d? ?-( ?\d\d?\/\d\d?)?\)?']
+    forSomething:       ['for [a-z]+.*?((?=[.;])|$)']
+    openParen:          ['\(']
+    closeParen:         ['\)']
+    dash:               ['-']
+    With:               ['with']
+    possibleDrugName:   ['\b[\w\- \/\.]{4,25}\b']   # anything between 4 and 15 chars long with word bounds at both ends
+    treatedWith:        ['treated with', 'on a regimen of', 'meds:', 'medications:']
+    contextClue:        ['(discharge|(at )?home|admi\w+|or|(out|in) ?(pt|patient))\s+(medication|med)s?', 'meds held', 'medication on admission',
+                         'medications on admission', medication, med, 'allergic to', allergy, allergies,
+                         '(hosp(ital)?|or|.?icu) (course|med(ication)?s?)',
+                         'lab(oratory)?( (results|data|review))?', labs, history, 'pmhx?', hpi, cc, 'chief complaint', 'on a regimen of',
+                         'titrated? off', 'on hold', standing, 'in (the )?(e(d|r)|emergency)','physical examination']
+    events:             ['(re)?started on']
+    drugClasse:         ['anti-?\w+', 'nsaids?', 'mvis?', 'multi-?vitamins?', 'Analgesics?', 'anesthetics?', 'narcotics?', 'salicylates?', 'muscle relaxants?',
+                         'beta-lactams?', 'tetracyclines?', 'statins?', 'diuretics?', 'corticosteroids?', 'laxatives?', 'cathartics?', 'stool softeners?',
+                         'contraceptives?', 'vitamins?', 'coagulants?', 'mood stabilizers?', 'ssris?', 'ndris?', 'saris?','beta\s*-?\s*blockers?' ]
+    #indicationPost:    ['for\s+(concern\s+about)?']
+    indicationPost:    ['for\s+(concern\s+about)?', 'with resolution of', 'to maintain', 'to keep', 'to avoid', 'prior to',
+                        'due to the concern of', 'to treat', 'by how', '(she|he|patient)\s+had',
+                        'because of', 'with a\s+(\w+\s+)?goal(\s+of)?',
+                        'secondary to', 'given', if, 'complain that']
+    indicationPre:    ['(cover\s+)?with', '((which|that)\s+(is|was)\s+)?(relieved|treated|resolved)\s+(by|with|after)']
+    indicationStop:    ['when', 'stop due to']
+
+wordBoundaryOptional:   [ [number,unitOfMeasure], [number, period] ] # not implemeted yet
+convenienceRules:
+    dotsAfterLtrOk:     [qd, bid, tid, qid, qod, qam, qpm, prn, ac, ad, as, au, hs, qhs, od, os, ou, pc, po, qs, ap, ud , qac, am, pm]
+    dotsAtEndOk:        [q, g, gm, mg, ml, mcg, cc, tab, cap, oint, ung, sol, susp, inh, amp, qv, h,
+                         hr, d, w, wk, mo, yr, amp, neb, ut dict]
+    canBePlural:        [gm, mg, ml, mcg, cc, tab, cap, tablet, gtt, drop, puff, neb, amp, inhaler,
+                         hr, hour, day, wk, week, mo, month, yr, year, med, medication,
+                         milligram, microgram, megagram, unit ,'iv injection', minute]
+    plurDotAtEnd:       [gm, mg, ml, mcg, cc]
+    pastState:          [inhale, restart, start, keep, increase, continue, discontinue, replace, switch, return]
+drugnameStoplist:      [cholesterol, iron, air, sodium, potassium, calcium, magnesium, glucose, phosphorus, oxygen]         # some versions of the druglist have needed a longer stop list
+nonTerminalsToParse:    # this is sort of like a start rule, nothing else will go to output
+#                       $parser->twoLevelParse ignores this rule
+    - drug
+    - possibleDrug
+    - context
+eventsChange:
+    start:    [restart, start]
+    stop:    [stop, stopped, discontinue, hold, held, withdrawal]
+    continue:    [keep, continue, cont'd, kept]
+    stopStart:    [increase, replace, change, switch, return]
+    startContinue:    ['being\s+on']
+
+dcSumSections:
+    #AdmissionMedications:    ['admi\w+\s+(medication|med)s?']
+    Medications:    ['medications\s+on\s+(admission|discharge|transfer)', '(discharge|transfer|home|admi\w+|new)\s+(medication|med)s?', '(prn\s+)?med(ication)?s']
+    PhysicalExamination:    ['physical\s+exam(ination)?(on\s+admission)?']
+    Laboratory:    ['admission\s+(laboratory\s+)?data', '(\w+\s+)?laboratory\s+(values|data)(\s+on\s+admission)?', '(\w+\s+)?((initial|discharge|admission)\s+)?(laboratories|labs)']
+    HospitalCourse:    ['(((brief\s+resume|summary)\s+of\s+)|(brief\s+))?hosp(ital)?\s+course(\s+by\s+problem)?', 'problem\s+list\s+by\s+system']
+    DietActivities:    ['(diet|activity|activities)']
+    Followup:    ['follow(\s+)?up\s+(appointment|plan)s?', '(discharge\s+)?follow(-)?up']
+    Diagnosis:    ['(admi\w+|principal\s+discharge|principal|primary|other)\s+(medical\s+)?diagnos(is|es)', 'list\s+of\s+(problems)', 'other\s+(significant\s+)?problems']
+    Allergy:    ['allergic to', allergy, allergies]
+    OperProcTreatment:    ['procedures\s+during\s+hospitalization', '(other\s+)?(operations|treatments|procedures)\s*(and|\W)\s*(treatments|procedures|operations)?']
+    Assessment:    ['assessment']
+    Comments:    ['(additional\s+)?comments']
+    Plan:    ['(to\s+do)(and|\W)\s*plan', '(action\s+)?plan', 'to\s+do']
+    dscCondition:    ['discharge\s+condition', 'condition(s)?\s+on\s+discharge']
+    DischargeInstruction:    ['discharge\s+instructions', '(interim\s+)?instructions(\s+for\s+\w+)?']
+    disposition:    ['disposition']
+    HistOfPresentIllness:   ['(brief\s+)?history\s+of\s+present\s+illness', 'history']
+    PastMedicalHist:    ['past\s+medical\s+history',]
+    SocialHistory:    ['socail\s+history', 'soc(\w+\s+)?hx', 'psych(\w+\s+)?((and|\W)(\s+)?)social(\w+)?']
+    FamilyHistory:    ['family\s+history']
+    Impression:    ['((initial|final)\s+)?impression']
+    Studies:    ['studies']
+    Review:    ['review(\s+of\s+systems)?']
+    #StructuredFields:    ['Dictated\s+by', 'attending', 'batch', 'discharge\s+date', 'service']
+    Changes:    [medication\s+changes]
