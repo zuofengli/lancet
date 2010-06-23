@@ -2239,6 +2239,7 @@ Temporomandibular joint tender	C0575152	finding
 Scoliosis deformity of spine	C0036439	disorder
 Scoliosis of thoracic spine	C0575270	finding
 Chest pain	C0008031	finding
+Heart pain	Z0000001	finding
 Lumbar spine scoliosis	C0575367	finding
 Paraumbilical hernia	C0019311	disorder
 Shoulder joint deformity	C0575544	finding
@@ -3817,6 +3818,7 @@ Anemia of chronic renal failure	C0271932	disorder
 Sinus bradycardia	C0085610	disorder
 Intussusception of intestine	C0021933	disorder
 Cough	C0010200	finding
+Dry cough	Z0000002	finding
 Hyperpigmentation of skin	C0162834	disorder
 Total pneumonectomy	C0032284	procedure
 Candidiasis of skin	C0006846	disorder

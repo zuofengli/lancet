@@ -2,10 +2,12 @@ package edu.uwm.jiaoduan.i2b2;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import edu.uwm.jiaoduan.Messages;
 import edu.uwm.jiaoduan.i2b2.utils.I2b2Evaluator;
+import edu.uwm.jiaoduan.i2b2.utils.JMerki;
 import edu.uwm.jiaoduan.i2b2.utils.LancetParser;
 import edu.uwm.jiaoduan.i2b2.utils.RawInput;
 import org.apache.commons.cli.CommandLine;
@@ -40,6 +42,8 @@ public class LancetMedExtractor {
 		boolean toShowDemo = false;
 		boolean toShowVersion = false;
 		String markedfile = "";
+		String program = "lancet";
+		String conceptfile = null;
 
 		if(args.length == 3){
 			goldfolder = args[2];
@@ -69,6 +73,10 @@ public class LancetMedExtractor {
 				toShowVersion = true;
 			}else if(opt.equals("m")){
 				markedfile = cmd.getOptionValue("m");
+			}else if(opt.equals("c")){
+				conceptfile = cmd.getOptionValue("c");
+			}else if (opt.equals("p")){
+				program = cmd.getOptionValue("p");
 			}else{
 				usage();
 			}
@@ -107,6 +115,8 @@ public class LancetMedExtractor {
 
 		int count =0;
 		boolean isNormalExist = false;
+		
+		
 		for(String file: fileList){
 			isNormalExist = false;
 			
@@ -138,9 +148,31 @@ public class LancetMedExtractor {
 			if (!markedfile.isEmpty() && !dxfile.isEmpty()){
 				String[] maskFields ={"do","mo","f","du"};
 				String marskedContent = lancet.getMaskedContent(listMeds, maskFields );
+				JMerki jm = new JMerki();
+				try {
+					JMerki.setLoadDrugNameLexicon(false);
+					jm.initializeParser();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				ArrayList<String> problemList = new ArrayList<String>();
+				marskedContent = jm.markMedicationFieldsInArticle(marskedContent, problemList );
 				rin.createFile(markedfile);
 				rin.writeFile(markedfile, marskedContent);
 				rin.CloseFile(markedfile);
+				
+				if (conceptfile != null){
+					rin.createFile(conceptfile);
+					for(String concept: problemList){
+						rin.writeLine(conceptfile, concept);
+					}
+					rin.CloseFile(conceptfile);
+				}else{
+					for(String concept: problemList){
+						System.out.println(concept);
+					}
+				}
+				
 			}
 
 			System.out.println("FINISH DISX: " + ++count);
@@ -219,9 +251,13 @@ public class LancetMedExtractor {
 		options.addOption("g", true, "Folder for gold standard files");		
 		options.addOption("gold", true, "Folder for gold standard files");
 		
+		options.addOption("p", true, "[lancet|jmerki|hybrid]Program: lancet core, jMerki and hybrid");		
+		options.addOption("program", true, "[lancet|jmerki|hybrid] Program: lancet core, jMerki and hybrid");
+		
 		options.addOption("demo", false, "Folder for gold standard files");
 		options.addOption("v", false, "Version information");
 		options.addOption("m", true, "Mark i2b2 field with M. This option should be used with infile option");
+		options.addOption("c", true, "c: concept: Problem concept file. This option should be used with M");
 		return options;
 	}
 

@@ -26,10 +26,14 @@ import edu.umass.cs.mallet.base.pipe.*;
 import edu.umass.cs.mallet.base.pipe.iterator.*;
 import edu.umass.cs.mallet.base.pipe.tsf.*;
 import junit.framework.*;
+
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.regex.*;
 import java.io.*;
+
+import cc.mallet.types.FeatureConjunction.List;
 
 /**
  * <p>
@@ -91,6 +95,13 @@ public class Trainer {
 			Pipe p;
 			CRF4 crf;
 			Input2TokenSequence its = new Input2TokenSequence();
+			
+			ArrayList<Pipe> pipes = new ArrayList<Pipe>();
+			
+			
+			p = new SerialPipes();
+			
+			
 			p = new SerialPipes(
 					new Pipe[] {
 							its,

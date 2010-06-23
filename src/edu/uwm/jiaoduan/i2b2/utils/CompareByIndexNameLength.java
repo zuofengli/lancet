@@ -8,13 +8,11 @@ public class CompareByIndexNameLength implements Comparator {
 
 	String index = "";
 	public CompareByIndexNameLength(String indexName) {
-		// TODO Auto-generated constructor stub
 		index = indexName;
 	}
 
 	@Override
-	public int compare(Object o1, Object o2) {
-		// TODO Auto-generated method stub
+	public int compare(Object o1, Object o2) {		
 		HashMap<String, String> a = (HashMap<String,String>) o1;
 		HashMap<String, String> b = (HashMap<String,String>) o2;
 		int aLength = a.get(index).length();

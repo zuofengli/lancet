@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -75,7 +76,6 @@ public class ListedMedication {
 		//		ParseDischageIntoPhrases();
 	}
 
-
 	/**
 	 * @definition 
 	 */
@@ -109,19 +109,21 @@ public class ListedMedication {
 
 			sectionPatterns.put(sectionName, pStr);
 		}
+		int size = sectionPatterns.keySet().size();
+		String[] patterns = new String[size];
+		int count =0;
 		for(String normSectName: sectionPatterns.keySet()){
-
-			//		System.out.print(sectionPatterns.get(normSectName));
-			//		System.out.print("|");
-
 			String pStr = sectionPatterns.get(normSectName);
+			patterns[count] =pStr;
+			count ++;
 
 			Pattern dscSection = Pattern.compile(pStr);
 			Matcher m = dscSection.matcher(content);
 			while(m.find())
 			{
 				HashMap<String, Integer> offset=  convertArticleRegion2TokenPosition(m.start(), m.end());
-				String parTokenOffset = Messages.getString("i2b2.parameters.discharge.section.title.maximal.line.token.offset");
+				String parTokenOffset = Messages.
+								getString("i2b2.parameters.discharge.section.title.maximal.line.token.offset");
 				if(parTokenOffset == null){
 					System.err.println("Could not find i2b2.parameters.discharge.section.title.maximal.line.token.offset parameter");
 					parTokenOffset = "0";
@@ -137,7 +139,8 @@ public class ListedMedication {
 			}
 
 		}
-//		System.out.println();
+		
+		//ystem.out.println(RawInput.join(patterns, '|'));
 
 		dscSections.put(content.length(), "End");
 
@@ -145,6 +148,10 @@ public class ListedMedication {
 			sctList.add(p);
 		//	make order 
 		Collections.sort(sctList);
+	}
+	
+	public HashMap<Integer, String> getStructuredSections(){
+		return dscSections;
 	}
 
 	//	public ListedMedication(String textContent, Map<String, String> patterns) {
@@ -385,6 +392,44 @@ public class ListedMedication {
 	 */
 	public HashMap<String, Integer> convertArticleRegion2TokenPosition(
 			int start, int end) {
+			HashMap<String,Integer> tokenOffset = new HashMap<String, Integer>();
+	        
+	        String preStartDocText = this.content.substring(0, start);
+	        
+	    	tokenOffset.put("StartLine", RawInput.countCharInString("\n", preStartDocText) + 1);
+	    	
+	    	
+	    	String preEndDocText = this.content.substring(0, end);
+	    	tokenOffset.put("EndLine", RawInput.countCharInString("\n", preEndDocText) + 1);
+	    	
+	    	int startLineBegin = preStartDocText.lastIndexOf("\n") + 1;
+	    	int endLineBegin = preStartDocText.lastIndexOf("\n") + 1;
+	    	
+	    	String ahead = content.substring(startLineBegin, start).trim();
+	    	if (ahead.isEmpty())
+	    		tokenOffset.put("StartTokenPosition",0);
+	    	else{
+	    	String[] beginTokens = ahead.split("\\s+");
+	    	tokenOffset.put("StartTokenPosition", beginTokens.length);
+	    	}
+	    	
+	    	ahead = content.substring(endLineBegin, end).trim();
+	    	if (ahead.isEmpty())
+	    		tokenOffset.put("EndTokenPosition",0);
+	    	else{
+	    	String[] endTokens = ahead.split("\\s+");
+	    	tokenOffset.put("EndTokenPosition", endTokens.length -1 );
+	    	}
+	    	
+
+			
+			
+			
+
+		return tokenOffset;
+	}
+	public HashMap<String, Integer> convertArticleRegion2TokenPosition_old(
+			int start, int end) {
 		String tokenContent = "";
 
 		int lineIndex =LINEBEGIN;
@@ -509,7 +554,7 @@ public class ListedMedication {
 	public void GetMedicationFields(String Singlei2b2List, HashMap<String, String> parseRlt) {
 		getFeatures(Singlei2b2List, parseRlt);
 	}
-	public static void getFeatures(String Singlei2b2List, HashMap<String, String> parseRlt) {
+	public static void getFeatures(String i2b2Entry, HashMap<String, String> parseRlt) {
 		//		System.out.println(content);
 
 		Pattern mentioned= Pattern.compile("^(m|do|mo|f|du|r|e|t|c|ln)=\"(.*?)\"\\s+(.*)$");
@@ -518,7 +563,7 @@ public class ListedMedication {
 
 		Matcher matcher=null;
 		String rEx = "\\|+";
-		String [] fields = Singlei2b2List.split(lmSeparator_ex);
+		String [] fields = i2b2Entry.split(lmSeparator_ex);
 		for (int i=0; i< fields.length; i++)
 		{
 			String seg = fields[i].trim();
@@ -596,7 +641,8 @@ public class ListedMedication {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				String labelledContent = jm.tagMedicalTerms(this.content);
+				ArrayList<String> conceptList = new ArrayList<String>();
+				String labelledContent = jm.tagMedicalTerms(this.content, conceptList);
 				strLines = labelledContent.split("\n");
 			}else
 				strLines = this.lines;
@@ -610,7 +656,8 @@ public class ListedMedication {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				String labelledOriginalContent = jm.tagMedicalTerms(this.originContent);
+				ArrayList<String> conceptList = new ArrayList<String>();
+				String labelledOriginalContent = jm.tagMedicalTerms(this.originContent, conceptList);
 				strLines = labelledOriginalContent.split("\n");
 			}else
 				strLines = this.orginalLines;
@@ -1258,7 +1305,7 @@ public class ListedMedication {
 	}
 
 	public String GetNormalizedTokenContent(int start, int end){
-		String tokenContent = GetTokenContent(start, end);
+		String tokenContent = getTokenContent(start, end);
 		return tokenContent.toLowerCase();
 	}
 	/*
@@ -1273,7 +1320,7 @@ public class ListedMedication {
 	 * input: end   int : the article absolute position   
 	 * output: token content  
 	 */
-	public String GetTokenContent(int start, int end){
+	public String getTokenContent(int start, int end){
 
 		String token = "";
 		if(end < start){
@@ -1667,7 +1714,12 @@ public class ListedMedication {
 	public ArrayList<HashMap<String, Integer>> parseOffset(String offset){
 		ArrayList<HashMap<String, Integer>> parsRlt = new ArrayList<HashMap<String, Integer>>();
 		Pattern pOffSet = Pattern.compile("(\\d+)\\s*:\\s*(\\d+)\\s+(\\d+)\\s*:\\s*(\\d+)");
-		Matcher mOffset = pOffSet.matcher(offset);
+		Matcher mOffset = null;
+		try{
+			mOffset= pOffSet.matcher(offset);
+		}catch(Exception error){
+			System.out.println(offset);
+		}
 		while(mOffset.find()){
 			HashMap<String, Integer> ofset = new HashMap<String, Integer>();
 			ofset.put("StartLine", Integer.parseInt(mOffset.group(1)));
@@ -1682,8 +1734,6 @@ public class ListedMedication {
 
 		return parsRlt;
 	}
-
-
 
 
 
@@ -1865,4 +1915,54 @@ public class ListedMedication {
 		
 		return highLightedText;
 	}
+	
+	/**
+	 * To match: 7/19/1992
+	 * @return
+	 * @reference: http://www.java2s.com/Code/Java/Development-Class/DateDiffcomputethedifferencebetweentwodates.htm
+	 */
+	public long getTimeSpan(){
+		long days = 0;
+		Pattern pAdmission = Pattern.compile("Admission Date:\\s+(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})", Pattern.CASE_INSENSITIVE);
+		Pattern pDischarge = Pattern.compile("Discharge Date:\\s+(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})", Pattern.CASE_INSENSITIVE);
+		
+		Matcher admMatch = pAdmission.matcher(content);
+		Matcher dsxMatch = pDischarge.matcher(content);
+		int month= 0;
+		int date=0;
+		int year=0;
+		Date admnDate = new Date();
+		Date dsxDate = new Date();
+
+		
+		if (admMatch.find()){
+			month = Integer.parseInt(admMatch.group(1));
+			date = Integer.parseInt(admMatch.group(2));
+			year = Integer.parseInt(admMatch.group(3));
+			
+			admnDate.setYear(year);
+			admnDate.setMonth(month);
+			admnDate.setDate(date);
+			System.out.print(admMatch.group() + "\t");
+		}else
+			System.out.print("NO MATCH: Admission date"+ "\t");
+		
+		if (dsxMatch.find()){
+			month = Integer.parseInt(dsxMatch.group(1));
+			date = Integer.parseInt(dsxMatch.group(2));
+			year = Integer.parseInt(dsxMatch.group(3));
+			
+			dsxDate.setYear(year);
+			dsxDate.setMonth(month);
+			dsxDate.setDate(date);
+			System.out.print(dsxMatch.group()+ "\t");
+		}else
+			System.out.print("NO MATCH: Discharge date"+ "\t");
+		
+		
+		
+		days = (dsxDate.getTime() - admnDate.getTime())/(1000 * 60 * 60 * 24);
+		return days;
+	}
+	
 }

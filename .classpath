@@ -2,15 +2,21 @@
 <classpath>
 	<classpathentry excluding="res/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/mallet04.jar" sourcepath="C:/zuofeng/eclipse/workspace/Jduan/mallet-0.4/src/edu/umass/cs/mallet/base/pipe/tsf/OffsetConjunctions.java"/>
 	<classpathentry kind="lib" path="lib/SnakeYAML-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/weka.jar"/>
 	<classpathentry kind="lib" path="lib/sptoolkit.jar"/>
 	<classpathentry kind="lib" path="lib/full_text_classifier.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/java_utils.jar"/>
-	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="lib/jythonlib2.51.jar"/>
 	<classpathentry kind="lib" path="lib/Lib"/>
+	<classpathentry kind="lib" path="lib/junit-4.6.jar"/>
+	<classpathentry kind="lib" path="lib/mallet.jar" sourcepath="C:/tools/mallet-2.0.5/mallet-2.0.5/src"/>
+	<classpathentry kind="lib" path="lib/mallet-deps.jar"/>
+	<classpathentry kind="lib" path="lib/mallet04.jar" sourcepath="C:/tools/mallet-0.4/mallet-0.4/src"/>
+	<classpathentry kind="lib" path="resources"/>
+	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="lib/Jama-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-2.9.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

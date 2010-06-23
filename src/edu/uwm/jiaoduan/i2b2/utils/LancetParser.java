@@ -4,19 +4,16 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +25,7 @@ import weka.core.Instances;
 
 import edu.uwm.jiaoduan.Messages;
 import edu.uwm.jiaoduan.i2b2.classifier.I2B2Classifier;
-import edu.uwm.jiaoduan.i2b2.knowtatorparser.KnowtatorXmlBuilder;
+import edu.uwm.jiaoduan.i2b2.crf.CRFTagger;
 import edu.uwm.jiaoduan.tools.abner.Tagger;
 import edu.uwm.jiaoduan.tools.negex.GenNegEx;
 
@@ -44,10 +41,8 @@ public class LancetParser extends ListedMedication {
 		String content = "";
 		if(iManner > 0){
 			content = super.GetContent();
-//			System.out.println("Convert to lower case");
 		}else{
 			content = super.getOriginContent();
-//			System.out.println("Keep original upper and lower case");
 		}
 		
 		
@@ -62,8 +57,10 @@ public class LancetParser extends ListedMedication {
 
 
 	private static final int I2B22009 = 2;
-//	private static Tagger crfTagger  = new Tagger( new File(Messages.getString("i2b2.CRF.Lancet.Parser.CRFModel.FilePath")));
+	private static final int I2B22010 = 3;
+
 	private static Tagger crfTagger  = new Tagger( I2B22009);
+//	private static CRFTagger crfTagger = new CRFTagger(I2B22010);
 	
 	private String article;
 	private ArrayList<HashMap<String, String>> taglist = null;
@@ -106,6 +103,7 @@ public class LancetParser extends ListedMedication {
 			i2b2Tags = this.taglist;
 			System.out.println("Parsing at sentence level");
 		}
+//		appendReasonFromMetaMap(i2b2Tags);
 		
 //		appendReasonBySingletonModel(i2b2Tags);
 //		appendFieldsFromOtherModel("lancetSingleton147.model", "R", i2b2Tags);
@@ -116,9 +114,9 @@ public class LancetParser extends ListedMedication {
 //		appendFieldsFromOtherModel("LancetDC147.model", "DU", i2b2Tags);
 //		i2b2Tags = filterDrugNameBySwissnifeModel(i2b2Tags);
 		
-		i2b2Tags = sortI2b2Tags(i2b2Tags);
+//		i2b2Tags = sortI2b2Tags(i2b2Tags);
 		
-		boolean bByMedication = false;
+		boolean bByMedication = true;
 		if(bByMedication){
 			for (int i = 0; i < i2b2Tags .size(); i++) {
 				String type = i2b2Tags.get(i).get("type");
@@ -205,7 +203,9 @@ public class LancetParser extends ListedMedication {
 		HashMap<Integer, HashMap<String,String>> posIndexedTags = new HashMap<Integer, HashMap<String,String>>();
 		for(HashMap<String,String> tag: tags){
 			String type = tag.get("type");
-			ArrayList<HashMap<String, Integer>> offsets = this.parseOffset(tag.get(type + "Offset"));
+			String i2b2Offset = tag.get(type + "Offset");
+				
+			ArrayList<HashMap<String, Integer>> offsets = this.parseOffset(i2b2Offset);
 			HashMap<String, Integer> offset = offsets.get(0);
 			int imLineStart = offset.get("StartLine");
 			int imTokenStart = offset.get("StartToken");
@@ -362,6 +362,7 @@ public class LancetParser extends ListedMedication {
 		String FieldSeparator = Messages.getString("i2b2.field.separator");
 		
 		try {
+//			append list/narrative information
 			setListNarrativeForMedication(medication);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -516,13 +517,28 @@ public class LancetParser extends ListedMedication {
 			}
 				
 		}
-
+	}
+		/**
+		 * @param tags
+		 */
+		private void appendReasonFromMetaMap(ArrayList<HashMap<String, String>> tags) {
+			//{R=dvt prophylaxis, ROffset=142:7 142:8, type=R}
+			String conFile = "661.con";
+			ArrayList<String> entries = RawInput.getListByEachLine(conFile,false );
+			for (String entry: entries){
+				HashMap<String,String> field = new HashMap<String,String>();
+				ListedMedication.getFeatures(entry, field);
+				HashMap<String, String> reason = new HashMap<String,String>();
+				reason.put("type", "R");
+				reason.put("ROffset", field.get("cTokenPosition"));
+				reason.put("R", field.get("c"));
+				
+				tags.add(reason);
+			}
 		
 	}
-
 	public void setListNarrativeForMedication(
 			HashMap<String, String> medication) throws Exception {
-		String offset = medication.get("MOffset");
 		Pattern pOffset = Pattern.compile("(\\d+):(\\d+)\\s+(\\d+):(\\d+)");
 
 		Matcher mm = pOffset.matcher(medication.get("MOffset"));
@@ -586,6 +602,7 @@ public class LancetParser extends ListedMedication {
 	public ArrayList<String> GetDrugList() {
 		// TODO Auto-generated method stub
 		String[] medications = crfTagger.getEntities(article, "M");
+		
 		ArrayList<String> medlist = new ArrayList<String>();
 		HashMap<String, Integer> meds = new HashMap<String, Integer>();
 		// ((.*)+)(\s*)?\((.*)(\s*)?(\(\s*(\w+)\s*\))?\)
@@ -650,6 +667,7 @@ public class LancetParser extends ListedMedication {
 
 		article = s.replaceAll("\\|", "\\\\|");
 		article = crfTagger.i2b2Tokenize(article);
+		
 		crfTagger.setTokenization(true, "i2b2");
 
 		String strSingeLineConvert = Messages.
@@ -865,10 +883,11 @@ public class LancetParser extends ListedMedication {
 		double threshold = Double.parseDouble(
 				Messages.getString("JiaoDuan.i2b2.stitching.model.threshold"));
 
-//				if( fieldType.equals("R")){
-//					threshold = 0.01;
-//					System.out.println(field.get(fieldType) + "\t" + field.get(fieldType+ "Offset") + "\t" + distpro[1]);
-//					return distpro[1] > threshold ? true : false;
+//		if( fieldType.equals("R")){
+//			threshold = 0.9;
+//			System.out.println(field.get(fieldType) + "\t" + field.get(fieldType+ "Offset") + "\t" + distpro[1]);
+//			return distpro[1] > threshold ? true : false;
+//		}
 //				}else if( fieldType.equals("DU")){
 //					threshold = 0.01;
 //					System.out.println(field.get(fieldType) + "\t" + field.get(fieldType+ "Offset") + "\t" + distpro[1]);
@@ -958,7 +977,7 @@ public class LancetParser extends ListedMedication {
 			int start = this.GetStartPositionOfToken(lineToken.get("StartLine"), lineToken.get("StartToken"));
 			int end = this.GetEndPositionOfToken(lineToken.get("EndLine"), lineToken.get("EndToken"));
 
-			String content = this.GetTokenContent(start, end);
+			String content = this.getTokenContent(start, end);
 			if(tokenContents.isEmpty())
 				tokenContents = content;
 			else
@@ -1211,7 +1230,7 @@ public class LancetParser extends ListedMedication {
 				HashMap<String, String> phrase = new HashMap<String, String>();
 				phrase.put("type", "ADJNOUN");
 
-				String tContent = this.GetTokenContent(sentBegin + p.start, sentBegin + p.end);
+				String tContent = this.getTokenContent(sentBegin + p.start, sentBegin + p.end);
 				phrase.put("ADJNOUN", tContent);
 
 				String offset = this.getTokenOffset(sentBegin + p.start, sentBegin + p.end);

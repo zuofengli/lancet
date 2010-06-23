@@ -558,7 +558,6 @@ public class Tagger {
 				}
 				
 				startOffset = endOffset + 1;
-//				System.out.println(startOffset);
 			}
 		}
 		return taglist;

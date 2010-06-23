@@ -328,6 +328,19 @@ public class RawInput {
 		out.close();
 
 	}
+	public static String writeTemporaryFile(String content, String prefix, String suffix){
+		String outfile = getTemporaryFilePath(prefix, suffix);
+		BufferedWriter fout = null;
+		try {
+			fout = new BufferedWriter(new FileWriter(outfile));
+			fout.write(content);
+			fout.close();
+		} catch (IOException e) {
+			System.out.println("Erro 0549pm: in RawInput : create file erro");
+			e.printStackTrace();
+		}
+		return outfile;
+	}
 
 	public static String getTemporaryFilePath(String prefix, String suffix){
 		File tempFile =  null;
@@ -779,25 +792,48 @@ public class RawInput {
 		try {
 			fos = new FileOutputStream(tmpfile);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}  
-		String content = "";
 		byte[] buf = new byte[1024];  
 		int i;  
 		try {
 			while((i=is.read(buf))!=-1){  
 				fos.write(buf, 0, i);  
-				content += new String(buf, 0, i);
 			}
 			fos.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(content);
 		//		System.out.println("RawInput: " + tmpfile);
 		return tmpfile;
+	}
+	public static String normalizeFolderPath(String folderPath) {
+		if (folderPath.contains("\\")){
+			if (!folderPath.endsWith("\\"))
+			folderPath += "\\";
+		}else if (folderPath.contains("/")){
+			if (!folderPath.endsWith("/"))
+				folderPath += "/";
+		}
+		return folderPath;
+	}
+	
+	public  static int countCharInString(String toCount, String inString){
+		int lastIndex = 0;
+		int count = 0;
+
+		while(lastIndex != -1){
+
+		       lastIndex = inString.indexOf(toCount,lastIndex);
+
+		       if( lastIndex != -1){
+		             count ++;
+		             lastIndex++;
+		      }
+		       
+		}
+		return count;
 	}
 
 }

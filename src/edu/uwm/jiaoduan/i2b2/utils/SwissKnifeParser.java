@@ -21,7 +21,7 @@ public class SwissKnifeParser extends LancetParser {
 	public void InitialParser(String content) {
 		String rModel = Messages
 		.getString("i2b2.Relate.Medication.Field.Model");
-		LoadTagRelationModel(rModel);
+		loadTagRelationModel(rModel);
 		
 		File file = new File(Messages.getString("i2b2.CRF.SwissKnife.Parser.CRFModel.FilePath"));
 		File fmodel = null;

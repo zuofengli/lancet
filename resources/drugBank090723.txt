@@ -264,7 +264,6 @@ Ritodrinium [INN-Latin]	drugBank00867	Synonyms
 NeoRecormon	drugBank00016	Brand_Names
 L-Thryoxin	drugBank00451	Synonyms
 Silubin	drugBank04830	Brand_Names
-s
 Endoxan R	drugBank00531	Brand_Names
 Alkeran	drugBank01042	Brand_Names
 oxytetracycline	drugBank00595	RxList_Link
@@ -2806,7 +2805,6 @@ Zenusin	drugBank01115	Brand_Names
 Corlux	drugBank00834	Brand_Names
 GS-500	drugBank00141	Brand_Names
 Atereal	drugBank00335	Brand_Names
-s
 Hydroxyzine	drugBank00557	Generic_Name
 Fluorothane	drugBank01159	Synonyms
 6-Thioguanine	drugBank00352	Synonyms
@@ -5729,7 +5727,6 @@ Reviparin	drugBank01109	Brand_Names
 Cyclopentylate	drugBank00979	Synonyms
 (3-Chloro-4-Propoxy-Phenyl)-Acetic Acid	drugBank02773	Generic_Name
 Atracurium Besylate	drugBank00565	Brand_Names
-s
 Mercasolyl	drugBank00763	Synonyms
 Copoylmer 1	drugBank05259	Synonyms
 ketoconazole	drugBank01026	Synonyms
@@ -8052,7 +8049,6 @@ Adenosine 5'-phosphate	drugBank00131	Synonyms
 Omisec	drugBank00338	Brand_Names
 Aminoethanol	drugBank00898	Synonyms
 Dehidrobenzperidol	drugBank00450	Brand_Names
-s
 Salicylazosulfapyridine	drugBank00795	Brand_Names
 Dimethyl sulfoxide BP	drugBank01093	Synonyms
 Vicks Sinex	drugBank00388	Brand_Names
@@ -8872,7 +8868,6 @@ Equetro	drugBank00564	Brand_Names
 Phthorothanum	drugBank01159	Brand_Names
 Isoflav Base	drugBank01123	Brand_Names
 Antitrombosin	drugBank00266	Brand_Names
-s
 Oxsoralen	drugBank00553	Brand_Names
 Diafen	drugBank01146	Brand_Names
 Xanyl	drugBank00883	Brand_Names
@@ -11409,7 +11404,6 @@ Gemcitabinum [INN-Latin]	drugBank00441	Brand_Names
 Adrucil	drugBank00544	Brand_Names
 Dpb-T	drugBank02217	Generic_Name
 17Alpha-methyl-4-hydroxynandrolone	drugBank01540	Generic_Name
-s
 Guanamprazin	drugBank00594	Brand_Names
 BH4	drugBank00360	Synonyms
 Bolasterone	drugBank01471	Generic_Name
@@ -14944,7 +14938,6 @@ AscoTop	drugBank00315	Brand_Names
 5-Allyl-5-sec-butylbarbituric acid	drugBank00306	Synonyms
 Activase	drugBank00009	Brand_Names
 Nubeta	drugBank04861	Brand_Names
-s
 Finasteridum [INN-Latin]	drugBank01216	Synonyms
 Amiglyde-V	drugBank00479	Brand_Names
 Orotidine-5'-Monophosphate	drugBank02957	Generic_Name
@@ -16279,7 +16272,6 @@ Salicyclic acid	drugBank00936	Generic_Name
 ReVia	drugBank00704	Brand_Names
 Algocalmin	drugBank04817	Brand_Names
 anti-RSV	drugBank00110	Synonyms
-s
 Valproate semisodique [French]	drugBank00313	Synonyms
 Parkisol	drugBank00392	Brand_Names
 Progevera	drugBank00603	Brand_Names
@@ -17191,7 +17183,6 @@ Denatured Alcohol Sd-39c	drugBank00898	Brand_Names
 Artes	drugBank00636	Brand_Names
 Crystamine	drugBank00115	Brand_Names
 Luteogan	drugBank00396	Brand_Names
-s
 Torecan	drugBank00372	Brand_Names
 White light	drugBank04829	Synonyms
 Vinorelbin	drugBank00361	Synonyms
@@ -18809,7 +18800,6 @@ S-Methyl Thiocysteine Group	drugBank02361	Generic_Name
 Velodan	drugBank00455	Brand_Names
 Dolophin hydrochloride	drugBank00333	Brand_Names
 irinot	drugBank00762	RxList_Link
-s
 Noperten	drugBank00722	Brand_Names
 Kalium S.R.	drugBank00761	Brand_Names
 Citopan	drugBank01355	Brand_Names
@@ -19488,7 +19478,6 @@ o-Acetoxybenzoic acid	drugBank00945	Synonyms
 Myvpack	drugBank00162	Brand_Names
 Albetol	drugBank00598	Brand_Names
 Sulfopon WA1 Special	drugBank00815	Brand_Names
-s
 ACETOPHENONE	drugBank04619	Generic_Name
 Cyclic adenylic acid	drugBank02527	Synonyms
 Minaprine	drugBank00805	Generic_Name
@@ -20915,7 +20904,6 @@ Natulanar	drugBank01168	Brand_Names
 Balsalazido [Spanish]	drugBank01014	Synonyms
 Carcinogens	drugBank00255	Drug_Category
 APAP	drugBank00316	Synonyms
-s
 Cytotec	drugBank00929	Brand_Names
 Cetane-Caps Td	drugBank00126	Brand_Names
 Pyrazinecarboxylic acid amide	drugBank00339	Synonyms
@@ -21758,7 +21746,6 @@ Mephentermine	drugBank01365	Generic_Name
 Hormone Antagonists	drugBank00050	Drug_Category
 Periactinol	drugBank00434	Brand_Names
 Laratrim	drugBank00440	Brand_Names
-s
 Pravastatin Sodium	drugBank00175	Synonyms
 K-lyte/C1	drugBank00761	Brand_Names
 Miconazole 7 Combination Pack	drugBank01110	Brand_Names
@@ -23168,7 +23155,6 @@ Cloderm	drugBank00838	Brand_Names
 Coccoclase	drugBank00891	Brand_Names
 Peter-kal	drugBank00761	Brand_Names
 mupi	drugBank00410	RxList_Link
-s
 Testoderm	drugBank00624	Brand_Names
 Pilocarpin	drugBank01085	Synonyms
 Brotopon	drugBank00502	Brand_Names
@@ -24013,7 +23999,6 @@ Alginodia	drugBank04817	Brand_Names
 Sulphamethoxazole	drugBank01015	Brand_Names
 Acenalin	drugBank00604	Brand_Names
 Felbamyl	drugBank00949	Brand_Names
-s
 Cardiolipin	drugBank03429	Generic_Name
 W-T Sasp Oral	drugBank00795	Brand_Names
 D.H.E.	drugBank00320	Brand_Names
@@ -24811,7 +24796,6 @@ Scabide	drugBank00676	Brand_Names
 Valtrex	drugBank00577	Brand_Names
 Cefalessina [DCIT]	drugBank00567	Synonyms
 Furodrix	drugBank00695	Brand_Names
-s
 Sorbangil	drugBank00883	Brand_Names
 Loratadinum [Latin]	drugBank00455	Synonyms
 Ospen	drugBank00417	Brand_Names
@@ -25429,7 +25413,6 @@ Dicupral	drugBank00822	Brand_Names
 1,8-Dihydroxyanthraquinone	drugBank04816	Synonyms
 ((2r,3s,5r)-3-Hydroxy-5-(4-Hydroxy-2-Oxo-3,4-Dihydropyrimidin-1(2h)-Yl)-Tetrahydrofuran-2-Yl)Methyldihydrogen Phosphate	drugBank04280	Generic_Name
 Ranitidin Basics	drugBank00863	Brand_Names
-s
 Abbocillin	drugBank01053	Brand_Names
 Trihexy	drugBank00376	Brand_Names
 Nergadan	drugBank00227	Brand_Names
@@ -27378,7 +27361,6 @@ Cyclorin	drugBank00260	Brand_Names
 Duponol waqe	drugBank00815	Brand_Names
 Micristin	drugBank00945	Brand_Names
 Curling factor	drugBank00400	Brand_Names
-s
 Cort-Quin	drugBank00741	Brand_Names
 Indo-Spray	drugBank00328	Brand_Names
 Ethyl Alcohol	drugBank00898	Synonyms
@@ -29856,7 +29838,6 @@ IL-1ra	drugBank00026	Synonyms
 adefovir dipivoxil	drugBank00718	Synonyms
 Ankebin	drugBank01039	Brand_Names
 Cyclospasmol	drugBank04838	Brand_Names
-s
 Penicillin-G Potassium	drugBank01053	Brand_Names
 Megatope	drugBank00064	Brand_Names
 Cortef Acetate	drugBank00741	Brand_Names

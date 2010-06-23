@@ -10,7 +10,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -231,8 +230,8 @@ public class I2b2Evaluator {
 		Collections.sort(spans);
 	}
 
-	public void combineResult(String res1dir, String res2dir, String outdir) {
-		File tf = new File(res1dir);
+	public void combineResult(String baseline, String lancet, String outdir) {
+		File tf = new File(baseline);
 		for (File f : tf.listFiles(new FilenameFilter() {
 
 			@Override
@@ -243,7 +242,7 @@ public class I2b2Evaluator {
 		})) {
 
 			// System.out.println("processing:" + f.getName());
-			combineFiles(res1dir + "/" + f.getName(), res2dir + "/"
+			combineFiles(baseline + "/" + f.getName(), lancet + "/"
 					+ f.getName(), outdir + "/" + f.getName());
 			// break;
 		}
@@ -254,16 +253,16 @@ public class I2b2Evaluator {
  * firstSpan: Map<String, Span>: contain a single i2b2 entry information.
  * secondSpan:  Map<String, Span>: contain a single i2b2 entry information.
  * 
- * The function would scan all of the i2b2 fields. In case one result is not available, the other one result would be accepted. 
+ * The function would scan all the six i2b2 fields (do,mo,f,du,r,ln). In case one result is not available, the other one result would be accepted. 
  * In case both results are available, the first result is preferred.
  */
-	public void outCombined(Map<String, Span> firstSpan,
-			Map<String, Span> secondSpan, PrintStream out) {
+	public void outCombined(Map<String, Span> baselineSpan,
+			Map<String, Span> lancetSpan, PrintStream out) {
 		String[] tags = new String[] { "m", "do", "mo", "f", "du", "r", "ln" };
 		int i = 0;
 		for (String tag : tags) {
-			Span s1 = firstSpan.get(tag);
-			Span s2 = secondSpan.get(tag);
+			Span s1 = baselineSpan.get(tag);
+			Span s2 = lancetSpan.get(tag);
 			if (i > 0)
 				out.print("||");
 			i++;
@@ -274,9 +273,12 @@ public class I2b2Evaluator {
 			else if (s1 == null && s2 == null)
 				out.print(tag + "=\"nm\"");
 			else {
+//				Experiment 1: prefer the baseline (jMerki: rule-based)
 				out.print(tag + "=" + s1.toI2b2());
-				// out.print(tag+"="+s2.toI2b2());
-				// out.print(tag+"="+((s1.compareTo(s2)<0)?s1.toI2b2():s2.toI2b2()));
+//				Experiment 2: prefer the second  (lancet: supervised machine learning )
+//				 out.print(tag+"="+s2.toI2b2());
+//				Experiment 3: prefer the longer one.
+//				 out.print(tag+"="+((s1.compareTo(s2)<0)?s1.toI2b2():s2.toI2b2()));
 			}
 
 		}
@@ -288,10 +290,10 @@ public class I2b2Evaluator {
 	 * @param string2
 	 * @param string3
 	 */
-	public void combineFiles(String f1, String f2, String outf) {
+	public void combineFiles(String baseline, String lancet, String outf) {
 		try {
-			String[] lns1 = FileUtil.readLines(f1);
-			String[] lns2 = FileUtil.readLines(f2);
+			String[] lns1 = FileUtil.readLines(baseline);
+			String[] lns2 = FileUtil.readLines(lancet);
 			// Arrays.sort(lns1);
 			// Arrays.sort(lns2);
 			PrintStream out = new PrintStream(new FileOutputStream(outf));
@@ -386,8 +388,12 @@ public class I2b2Evaluator {
 		if (args.length == 3) {
 			if (args[0].equals("filter")) {
 				eval.filterResult(args[1], args[2]);
-			} else
-				eval.combineResult(args[0], args[1], args[2]);
+			} else{
+				String baseLine = args[0];
+				String lancet = args[1];
+				String hybrid = args[2];
+				eval.combineResult(baseLine, lancet, hybrid);
+			}
 			// eval.combineResult("./i2b2Data/Challenge2009/crfOutput147/2",
 			// "./i2b2Data/Challenge2009/jmOutput147/2","i2b2Data/Challenge2009/combineOutput147/");
 		} else if (args.length == 2) {
