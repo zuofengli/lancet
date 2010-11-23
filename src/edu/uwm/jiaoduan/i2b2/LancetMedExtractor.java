@@ -31,7 +31,8 @@ public class LancetMedExtractor {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		checkingEnvironment();
+//		checkingEnvironment();
+		
 		// create Options object		
 		Options lancetOptions = initLancetOption();
 
@@ -194,14 +195,14 @@ public class LancetMedExtractor {
 		
 	}
 
-	private static void checkingEnvironment() {
-
-		String jython_path = System.getenv("JYTHON_HOME");//JYTHON_HOME
-		if(jython_path == null){
-			System.out.println("Please install jython and set an enviroment variable named JYTHON_HOME.");
-		}
-
-	}
+//	private static void checkingEnvironment() {
+//
+//		String jython_path = System.getenv("JYTHON_HOME");//JYTHON_HOME
+//		if(jython_path == null){
+//			System.out.println("Please install jython 2.5.1 and set an enviroment variable named JYTHON_HOME.");
+//		}
+//
+//	}
 
 	private static void demo(String excerpt) throws Exception {
 		LancetParser lancet  = new LancetParser(excerpt);
