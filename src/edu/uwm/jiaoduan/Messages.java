@@ -20,6 +20,7 @@ public class Messages {
 			RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	}
+	 
 
 	public static String getString(String key) {
 		try {
