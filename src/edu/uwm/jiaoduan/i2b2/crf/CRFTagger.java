@@ -76,13 +76,13 @@ public class CRFTagger {
 	private int I2B22010 = 3;
 	public static void main(String[] args) throws Exception {
 		double[] varGaussianPrior = new double[]{0, 0.1, 0.5, 1 , 10,100};
-		for (double var : varGaussianPrior){
+		
 //		Tagger t = new Tagger(new File("./crf.model" + "." + Double.toString(var) + ".crf"));
-		CRFTagger t = new CRFTagger(new File("./lancet147v2" + "." + Double.toString(var) + ".crf"));
+		String modelFile = Messages.getString("adr.crf.file");
+		CRFTagger t = new CRFTagger(new File(modelFile));
 		t.setTokenization(true, "i2b2");
-		String rlt = t.tagIOB("otrin 225 mg q d , vancomycin 1250 mg q 24");
+		String rlt = t.tagSGML("otrin 225 mg q d , vancomycin 1250 mg q 24");
 		RawInput.getInput(rlt);
-		}
 	}
 
     ////////////////////////////////////////////////////////////////
