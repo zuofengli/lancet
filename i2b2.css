@@ -1,7 +1,7 @@
 m
 {
 text-align:center;
-color:red;
+color:blue;
 font-family:bold;
 text-transform:uppercase;
 
@@ -39,6 +39,14 @@ r
 {
 text-align:center;
 color:read;
+font-family:bold;
+text-transform:uppercase;
+background-color: blue
+}
+ad
+{
+text-align:center;
+color:red;
 font-family:bold;
 text-transform:uppercase;
 background-color: blue
