@@ -29,35 +29,62 @@ public class KnowtatorXmlBuilder {
 	private AttributesImpl atts = new AttributesImpl();
 	// SAX2.0 ContentHandler.
 	ContentHandler hd = null;
+	
+	private String annotatorShortName = "ConptExtractor";
 
 	int root_id = 300000;
 	int lastArtificialId = 0;
 	ListedMedication pListMedication = null;
-	private String articleId;
+	private String articleFileName;
+	private String annotatorInstanceId;
+	private String annotator;
 	/**
 	 * 
-	 * @param id
-	 * @param article
+	 * @param uid
+	 * @param articleContent
 	 * @param listedMeds
 	 * @param instanceIdRoot
 	 * 
 	 * @throws SAXException
 	 */
-	public KnowtatorXmlBuilder(String id, String article, ArrayList<String> listedMeds, int instanceIdRoot) throws SAXException {
+	public KnowtatorXmlBuilder(String uid, String articleContent, ArrayList<String> listedMeds, int instanceIdRoot, String annotatorId) throws SAXException {
 		if(root_id < instanceIdRoot)
 			root_id = instanceIdRoot;
+		
+		if (annotatorInstanceId == "aers51_Instance_60000"){
+			
+		}else if (annotatorInstanceId == "aers51_Instance_10000"){
+			
+			
+		}
+		if (annotatorId == "007"){
+			annotator = "Lancet Li, UWM";
+			annotatorShortName = "Lancet";
+			annotatorInstanceId = "aers51_Instance_40002";
+		}
+		else if (annotatorId == "008"){
+			annotator = "ConceptExtractor Li, UWM";
+			annotatorShortName = "ConptExtractor";
+			annotatorInstanceId = "aers51_Instance_40003";
+		}else
+			System.err.println("no such annotator");
 
-		articleId = id;
+		articleFileName = uid;
 		InitialBuilder();
 		SetAnnotationsNode();
 
 		try {
-			pListMedication = new ListedMedication(article);
+			pListMedication = new ListedMedication(articleContent);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String[] shortFieldNameList = Messages.getString("i2b2.competition.2009.fields").split(",");
-		String[] longFieldNameList = Messages.getString("i2b2.competition.2009.fields.full.expression").split(",");
+		//String[] shortFieldNameList = Messages.getString("i2b2.competition.2009.fields").split(",");
+		String[] shortFieldNameList = Messages.getString("jiaoduan.semantic.labels.short").split(",");
+		
+//		String[] longFieldNameList = Messages.getString("i2b2.competition.2009.fields.full.expression").split(",");
+//		String[] longFieldNameList = Messages.getString("i2b2.competition.2009.fields.full.expression.adr").split(",");
+		String[] longFieldNameList = Messages.getString("jiaoduan.semantic.lables.long").split(",");
+		
 
 		for(String lm: listedMeds){
 			System.out.println(lm);
@@ -69,7 +96,11 @@ public class KnowtatorXmlBuilder {
 			String longMedicationClassName =  "";
 			HashMap<String, ArrayList<String>> fieldAnnotationList = new HashMap<String, ArrayList<String>>();
 			HashMap<String,String> fieldTypeHasSlotIdMap = new HashMap<String,String>();
-
+			
+			boolean hasFakeDrugField = false;
+			if ( lm.contains("0:0 0:0"))
+				hasFakeDrugField = true;
+			
 			//			lookthrough all of the fields including m in the medication
 			for(int i =0; i < shortFieldNameList.length; i ++){
 				String shortFieldName = shortFieldNameList[i];
@@ -90,9 +121,18 @@ public class KnowtatorXmlBuilder {
 					ArrayList<HashMap<String, Integer>> tokenOffsets = pListMedication.parseOffset(offset);
 
 					for(HashMap<String, Integer> tokenOffset: tokenOffsets){
+						
+						
+						//m="drug" 0:0 0:0
+						//skip fake drug field
+						if (tokenOffset.get("StartLine") == 0){
+//							tokenOffset.put("StartLine", 1);
+//							tokenOffset.put("EndLine", 1);
+							continue;
+						}
 						String InstanceId = getKnowtatorArtificialId();
 						SetAnnotationNode(InstanceId, tokenOffset);
-						if(!shortFieldName.equals("m")){
+						if(!shortFieldName.equals("m") && !hasFakeDrugField){
 							if(fieldAnnotationList.containsKey(shortFieldName)){
 								fieldAnnotationList.get(shortFieldName).add(InstanceId);
 							}else{
@@ -102,19 +142,23 @@ public class KnowtatorXmlBuilder {
 								fieldAnnotationList.put(shortFieldName, idList);
 							}
 							SetFieldClassMentionNode(InstanceId, longFieldName);
+						}else if(!shortFieldName.equals("m") && hasFakeDrugField){
+							SetMedicationClassMentionNode(InstanceId, 
+									longFieldName, fieldAnnotationList, fieldTypeHasSlotIdMap);
 						}else{
-							//							TODO need code to cope with drug name with multiple offset
-							//							current ontology do not support multiple offset.
+							//TODO need code to cope with drug name with multiple offset
+							//current ontology do not support multiple offset.
 							medicationId = InstanceId;
 							longMedicationClassName = longFieldName;
 						}
 					}
 				}
-			}
-
-			SetMedicationClassMentionNode(medicationId, longMedicationClassName, fieldAnnotationList, fieldTypeHasSlotIdMap);
-			SetComplexSlotMention(fieldAnnotationList, fieldTypeHasSlotIdMap);
-		}
+			}//end of one sub field
+			
+			if (!hasFakeDrugField)
+				SetMedicationClassMentionNode(medicationId, longMedicationClassName, fieldAnnotationList, fieldTypeHasSlotIdMap);
+				SetComplexSlotMention(fieldAnnotationList, fieldTypeHasSlotIdMap);
+		}//end of one list medication
 		EndBuilder();
 	}
 	private void SetComplexSlotMention(
@@ -127,7 +171,16 @@ public class KnowtatorXmlBuilder {
 				atts.clear();
 
 				//				<mentionSlot id="m" />
-				atts.addAttribute("", "","id" ,"", type);
+				HashMap<String,String> maps = new HashMap<String,String>();
+				maps.put("f", "fr");
+				maps.put("do","do");
+				maps.put("mo", "manner");
+				maps.put("r", "reason");
+				maps.put("du", "du");
+				maps.put("ossd", "other S/S/D");
+				
+				String nmType = maps.get(type);
+				atts.addAttribute("", "","id" ,"", nmType);
 				hd.startElement("", "", "mentionSlot", atts);
 				hd.endElement("", "mentionSlotn" , "");
 				atts.clear();
@@ -222,7 +275,7 @@ public class KnowtatorXmlBuilder {
 
 	private String getKnowtatorArtificialId() {
 		root_id ++;
-		String artificialId = "i2b222009_Instance_";
+		String artificialId = annotatorShortName + "_Instance_"; // "i2b222009_Instance_";
 		artificialId += Integer.toString(root_id);
 
 		return artificialId;
@@ -330,13 +383,19 @@ public class KnowtatorXmlBuilder {
 	}
 
 	private void SetSubAnnotator() {
-		String instanceId = "i2b22009_Instance_70000";
+		//String annotatorInstanceId = "aers51_Instance_60000";
+		//Todo: annotatorInstanceId should be changed for different projects. 
 		//		<annotator id="i2b22009_Instance_90001">Zuofeng Li, UWM Natural Languaguage Processing Group</annotator>
-		atts.addAttribute("","","id","",instanceId);
-
+		//      <annotator id="aers51_Instance_10000">Lancet Li, UWM</annotator>
+//				<annotator id="aers51_Instance_60000">ConceptExtractor Li, UWM</annotator>
+		atts.addAttribute("","","id","",annotatorInstanceId);
+		
+		//String annotator = "Lancet Li, UWM";
+		
+		
 		try {
 			hd.startElement("","","annotator",atts);
-			String annotator = "JiaoDuan , A Natrual Language Processing System";
+			
 			hd.characters(annotator.toCharArray(), 0, annotator.length());
 			hd.endElement("","","span");
 			atts.clear();
@@ -363,7 +422,7 @@ public class KnowtatorXmlBuilder {
 	private void SetAnnotationsNode() {
 		try {
 			//			atts.addAttribute("", "textSource", "", "", "5" + "\\" + "501104");
-			atts.addAttribute("", "textSource", "", "", articleId);
+			atts.addAttribute("", "textSource", "", "", articleFileName);
 			hd.startElement("","","annotations",atts);
 		} catch (SAXException e) {
 			e.printStackTrace();

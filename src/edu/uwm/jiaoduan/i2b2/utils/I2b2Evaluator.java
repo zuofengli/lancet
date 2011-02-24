@@ -231,19 +231,46 @@ public class I2b2Evaluator {
 	}
 
 	public void combineResult(String baseline, String lancet, String outdir) {
+		if (!baseline.endsWith("/") || !baseline.endsWith("\\"))
+			baseline += "/";
+		if (!lancet.endsWith("/") || !lancet.endsWith("\\"))
+			lancet += "/";
+		if (!outdir.endsWith("/") || !outdir.endsWith("\\"))
+			outdir += "/";
+		
 		File tf = new File(baseline);
 		for (File f : tf.listFiles(new FilenameFilter() {
 
 			@Override
 			public boolean accept(File dir, String name) {
 				// TODO Auto-generated method stub
-				return name.endsWith(".i2b2.entries");
+				return name.endsWith(".i2b2.entries") || name.endsWith(".con");
 			}
 		})) {
 
 			// System.out.println("processing:" + f.getName());
-			combineFiles(baseline + "/" + f.getName(), lancet + "/"
-					+ f.getName(), outdir + "/" + f.getName());
+			String fn = f.getName();
+			
+			String fromFile = baseline + fn;
+			String destFile = lancet + fn;
+			String outFile = outdir + fn;
+			
+			ArrayList<String> fromLines = RawInput.getListByEachLine(fromFile, false);
+			
+			if (fn.endsWith(".con")){
+				fn = fn.substring(0, fn.length()-4) + ".i2b2.entries";
+				destFile = lancet + fn;
+				outFile = outdir + fn;
+				
+				fromLines = ListedMedication.transform(fromLines);
+				
+			}
+			
+			ArrayList<String> destLines = RawInput.getListByEachLine(destFile, false);
+			mergeFiles(fromLines, 
+					destLines,
+					outFile
+					);
 			// break;
 		}
 	}
@@ -290,21 +317,21 @@ public class I2b2Evaluator {
 	 * @param string2
 	 * @param string3
 	 */
-	public void combineFiles(String baseline, String lancet, String outf) {
+	public void mergeFiles(ArrayList<String> fromLines, ArrayList<String> destLines, String outputdir) {
 		try {
-			String[] lns1 = FileUtil.readLines(baseline);
-			String[] lns2 = FileUtil.readLines(lancet);
+//			String[] lns1 = FileUtil.readLines(fromdir);
+//			String[] lns2 = FileUtil.readLines(destdir);
 			// Arrays.sort(lns1);
 			// Arrays.sort(lns2);
-			PrintStream out = new PrintStream(new FileOutputStream(outf));
+			PrintStream out = new PrintStream(new FileOutputStream(outputdir));
 			int goldpos = 0;
-			for (String ln : lns1) {
+			for (String ln : fromLines) {
 				Map<String, Span> firstspan = parseLine(ln);
 				Span span = firstspan.get("m");
 				boolean proccessed = false;
 
-				for (; goldpos < lns2.length; goldpos++) {
-					String ln2 = lns2[goldpos];
+				for (; goldpos < destLines.size(); goldpos++) {
+					String ln2 = destLines.get(goldpos);
 					if (ln2.equals(ln)) {
 						out.println(ln);
 						proccessed = true;
@@ -331,12 +358,11 @@ public class I2b2Evaluator {
 					out.println(ln);
 
 			}
-			for (; goldpos < lns2.length; goldpos++) {
-				out.println(lns2[goldpos]);
+			for (; goldpos < destLines.size(); goldpos++) {
+				out.println(destLines.get(goldpos));
 			}
 			out.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -384,6 +410,7 @@ public class I2b2Evaluator {
 		/*
 		 * Three parameters: to combine the two folder results and output the third folder
 		 * Ask for yonggang : which is merged to which
+		 * baseline output is merged into lancet output.
 		 */
 		if (args.length == 3) {
 			if (args[0].equals("filter")) {

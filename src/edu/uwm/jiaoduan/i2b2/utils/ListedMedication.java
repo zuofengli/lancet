@@ -554,12 +554,51 @@ public class ListedMedication {
 	public void GetMedicationFields(String Singlei2b2List, HashMap<String, String> parseRlt) {
 		getFeatures(Singlei2b2List, parseRlt);
 	}
+	/**
+	 * Transform the i2b2 2010 format (concept format) into i2b2 2009 format
+	 * @param concepts
+	 * @return
+	 */
+	public static ArrayList<String> transform(ArrayList<String> concepts) {
+		// c="Mucomyst" 54:1 54:1||t="medication"
+		//Transform to: m="Mucomyst" 54:1 54:1||do="nm"||mo="nm"||f="nm"||du="nm"||r="nm"||ln="nm"
+		//c="Recent severe acute renal failure" 44:1 44:5||t="problem"
+		//Transform to: m="drug" 0:0 0:0||ossd="Recent severe acute renal failure" 44:1 44:5||do="nm"||mo="nm"||f="nm"||du="nm"||r="nm"||ad="nm"||mt="nm" ||mc="nm" ||oc="nm" ||ln="nm"
+		ArrayList<String> listMeds = new ArrayList<String>();
+		for (int i =0; i < concepts.size(); i ++){
+			String concept = concepts.get(i);
+			Pattern pMedication = Pattern.compile("t=\"\"");
+			String[] fields = concept.split("\\|\\|");
+			String i2b2Entry = "";
+			
+			if (fields[1].contains("medication")){
+				i2b2Entry = fields[0].replaceFirst("^c=", "m=");
+				//i2b2Entry += "||do=\"nm\"||mo=\"nm\"||f=\"nm\"||du=\"nm\"||r=\"nm\"||ln=\"nm\"";
+				
+			}else if(fields[1].contains("problem")){
+				i2b2Entry = "m=\"drug\" 0:0 0:0||";
+				String entry = fields[0].replaceFirst("^c=", "ossd=");
+				i2b2Entry += entry;
+				concepts.set(i, i2b2Entry);
+			}else{
+				continue;
+			}
+			
+			listMeds.add(i2b2Entry);
+			
+		}
+		return listMeds;
+	}
 	public static void getFeatures(String i2b2Entry, HashMap<String, String> parseRlt) {
-		//		System.out.println(content);
+		
+		
 
-		Pattern mentioned= Pattern.compile("^(m|do|mo|f|du|r|e|t|c|ln)=\"(.*?)\"\\s+(.*)$");
-		Pattern nm = Pattern.compile("^(m|do|mo|f|du|r|e|t|c|ln)=\"nm\"$");
-		Pattern ln = Pattern.compile("^(m|do|mo|f|du|r|e|t|c|ln)=\"(list|narrative|negative)\"$");		
+//		Pattern mentioned= Pattern.compile("^(m|do|mo|f|du|r|e|t|c|ln)=\"(.*?)\"\\s+(.*)$");
+//		Pattern nm = Pattern.compile("^(m|do|mo|f|du|r|e|t|c|ln)=\"nm\"$");
+//		Pattern ln = Pattern.compile("^(m|do|mo|f|du|r|e|t|c|ln)=\"(list|narrative|negative)\"$");	
+		Pattern mentioned= Pattern.compile("^([a-z]+)=\"(.*?)\"\\s+(.*)$");
+		Pattern nm = Pattern.compile("^([a-z]+)=\"nm\"$");
+		Pattern ln = Pattern.compile("^([a-z]+)=\"(list|narrative|negative)\"$");	
 
 		Matcher matcher=null;
 		String rEx = "\\|+";
