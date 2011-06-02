@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 import edu.uwm.jiaoduan.i2b2.crf.Span;
 
 /**
+ * @author Zuofeng
+ * @date February 25 2011
  * @author yonggang
  * @date Aug 18, 2009
  */

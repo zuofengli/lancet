@@ -677,6 +677,7 @@ public class LancetParser extends ListedMedication {
 			bParsMannerSingleLine = true;
 			taglist = crfTagger.tagI2B2(article.
 					replaceAll("\n", " "));
+			
 		}else if(bTagArticleBySentence ){
 			ArrayList<HashMap<String, String>> span = getSentenceSpan();
 			taglist = crfTagger.tagI2B2BySentence(span, super.getContentWithoutEnter());

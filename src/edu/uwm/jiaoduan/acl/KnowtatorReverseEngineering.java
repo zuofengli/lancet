@@ -23,6 +23,7 @@ public class KnowtatorReverseEngineering {
 		String raw_dir = "C:/Users/Zuofeng/data/adrs/corpus/pitts-dx50/";
 		String gt_dir = "C:/Users/Zuofeng/data/auto/lancet1.13/pitts-dx50/";
 		String annotator_id = "007";
+		String annotator_instantId = "aers51_Instance_170000";
 		String kx_dir = "C:/Users/Zuofeng/data/auto/Knowtator/pitts-dx50/";
 		
 		boolean isFromConceptExtractor = false;
@@ -32,6 +33,30 @@ public class KnowtatorReverseEngineering {
 //		kx_dir = "C:/Users/Zuofeng/data/auto/Knowtator/pitts-dx50-ec/";
 //		isFromConceptExtractor = true;
 //		////////////////////
+		
+		//aers51
+//		raw_dir = "C:/Users/Zuofeng/data/adrs/corpus/aers51/";
+//		gt_dir = "C:/Users/Zuofeng/data/auto/lancet1.13/aers51/";
+//		annotator_id = "007";//lancet
+//		annotator_instantId = "aers51_Instance_210000";
+//		kx_dir = "C:/Users/Zuofeng/data/auto/lancet1.13/knowtator/aers51/";
+		
+//		//agree
+//		raw_dir = "C:/Users/Zuofeng/data/adrs/corpus/aers51/";
+//		gt_dir = "C:/Users/Zuofeng/data/auto/annotation/agree/";
+//		annotator_instantId = "aers51_Instance_240000";
+//		kx_dir = "C:/Users/Zuofeng/data/auto/Knowtator/amiaPoster/agree/";
+//		String shortNameForOracle = "agree";
+//		String longNameForOracle = "agree annotation between Zufeng and Nadya";
+		
+////		//diff
+		raw_dir = "C:/Users/Zuofeng/data/adrs/corpus/aers51/";
+		gt_dir = "C:/Users/Zuofeng/data/auto/annotation/diff/";
+		annotator_instantId = "aers51_Instance_250001";
+		kx_dir = "C:/Users/Zuofeng/data/auto/Knowtator/amiaPoster/diff/";
+		String shortNameForOracle = "diff";
+		String longNameForOracle = "diff annotation between Zufeng and Nadya";
+		
 		
 		ArrayList<String> fileList = new ArrayList<String>();
 		RawInput.getDirectoryFile(raw_dir, fileList );
@@ -62,7 +87,9 @@ public class KnowtatorReverseEngineering {
 						articleContent,
 						listedMeds,
 						instanceRoot,
-						annotator_id
+						shortNameForOracle,
+						longNameForOracle,
+						annotator_instantId
 						);
 				try {
 					FileUtil.writeFile(kxFilePathName, kxbuilder.getXMLContent());

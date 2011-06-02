@@ -107,6 +107,9 @@ public class RawInput {
 
 		return content;
 	}
+	public static ArrayList<String> getLines(String infilePath, boolean keepBlankLine ){
+		return getListByEachLine(infilePath, keepBlankLine, "");		
+	}
 	/**
 	 * @param infilePath
 	 * @param keepBlankLine boolean
@@ -403,9 +406,9 @@ public class RawInput {
 	 * 
 	 * Output: ArrayList<String>: file name with extension name: 
 	 */
-	public ArrayList<String> GetFileNameList(String folder) {
+	public static ArrayList<String> GetFileNameList(String folder) {
 		ArrayList<String> filePathNameList = new ArrayList<String>();
-		this.getDirectoryFile(folder, filePathNameList );
+		RawInput.getDirectoryFile(folder, filePathNameList );
 
 		ArrayList<String> nameList = new ArrayList<String>();
 		for(String filePathName: filePathNameList){
@@ -610,6 +613,22 @@ public class RawInput {
 	 */
 	public static String join(String[] pieces, char delimiter){
 		return join(pieces, String.valueOf(delimiter));
+	}
+	public static String join(ArrayList<String> pieces, String delimiter){
+		if(pieces==null || pieces.size() == 0 || delimiter == null) {
+			return "";
+		}
+
+		StringBuffer buf = new StringBuffer();
+
+		for(int i=0; i<pieces.size(); i++)  {
+			if(i>0) {
+				buf.append(delimiter);
+			}
+			buf.append(pieces.get(i));
+		}
+
+		return buf.toString();
 	}
 
 	public static String join(String[] pieces, String delimiter){

@@ -37,7 +37,7 @@ public class KnowtatorXmlBuilder {
 	ListedMedication pListMedication = null;
 	private String articleFileName;
 	private String annotatorInstanceId;
-	private String annotator;
+	private String annotatorLongName;
 	/**
 	 * 
 	 * @param uid
@@ -47,27 +47,26 @@ public class KnowtatorXmlBuilder {
 	 * 
 	 * @throws SAXException
 	 */
-	public KnowtatorXmlBuilder(String uid, String articleContent, ArrayList<String> listedMeds, int instanceIdRoot, String annotatorId) throws SAXException {
+	public KnowtatorXmlBuilder(String uid, String articleContent, ArrayList<String> listedMeds, int instanceIdRoot, String shortName, String longName , String projectInstanceIdForAnnotator) throws SAXException {
 		if(root_id < instanceIdRoot)
 			root_id = instanceIdRoot;
 		
-		if (annotatorInstanceId == "aers51_Instance_60000"){
-			
-		}else if (annotatorInstanceId == "aers51_Instance_10000"){
-			
-			
-		}
-		if (annotatorId == "007"){
-			annotator = "Lancet Li, UWM";
-			annotatorShortName = "Lancet";
-			annotatorInstanceId = "aers51_Instance_40002";
-		}
-		else if (annotatorId == "008"){
-			annotator = "ConceptExtractor Li, UWM";
-			annotatorShortName = "ConptExtractor";
-			annotatorInstanceId = "aers51_Instance_40003";
-		}else
-			System.err.println("no such annotator");
+		annotatorInstanceId = projectInstanceIdForAnnotator;
+		
+//		if (annotatorId == "007"){
+//			annotatorLongName = "Lancet Li, UWM";
+//			annotatorShortName = "Lancet";
+//			//annotatorInstanceId = "aers51_Instance_40002";
+//		}
+//		else if (annotatorId == "008"){
+//			annotatorLongName = "ConceptExtractor Li, UWM";
+//			annotatorShortName = "ConptExtractor";
+//			//annotatorInstanceId = "aers51_Instance_40003";
+//		}else
+//			System.err.println("no such annotator");
+		
+		annotatorLongName = longName;
+		annotatorShortName = shortName;
 
 		articleFileName = uid;
 		InitialBuilder();
@@ -178,6 +177,7 @@ public class KnowtatorXmlBuilder {
 				maps.put("r", "reason");
 				maps.put("du", "du");
 				maps.put("ossd", "other S/S/D");
+				maps.put("ad", "adverse");
 				
 				String nmType = maps.get(type);
 				atts.addAttribute("", "","id" ,"", nmType);
@@ -396,7 +396,7 @@ public class KnowtatorXmlBuilder {
 		try {
 			hd.startElement("","","annotator",atts);
 			
-			hd.characters(annotator.toCharArray(), 0, annotator.length());
+			hd.characters(annotatorLongName.toCharArray(), 0, annotatorLongName.length());
 			hd.endElement("","","span");
 			atts.clear();
 		} catch (SAXException e) {
