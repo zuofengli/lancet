@@ -12,12 +12,15 @@ public class KnowtatorXmlTransformer {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String kx_dir = "C:/Users/Zuofeng/Desktop/AIMA-IAA/annts-4classes/";
-		String tg_dir = "C:/Users/Zuofeng/Desktop/AIMA-IAA/transformed/";
+		String kx_dir = "I:/uwm/Papers/aers/Annotations/Zuofeng51/xmlAnnts/";
+		String tg_dir = "I:/uwm/Papers/aers/Annotations/Zuofeng51/Zuofeng51XmlAnntsTransformed/";
+		String annotatorName = "Zuofeng";
+		String biasName = "51";
 		
 		RawInput rin = new RawInput();
 		
-		String type = "NULL_CLASS";
+		//String type = "NULL_CLASS";
+		String type = "transform";
 		ArrayList<String> fnList = RawInput.GetFileNameList(kx_dir);
 		for (String fn : fnList){
 			ArrayList<String> lines = RawInput.getListByEachLine(kx_dir + fn, true);
@@ -38,22 +41,34 @@ public class KnowtatorXmlTransformer {
 				Matcher ms = pMentionId.matcher(nc);
 				while(ms.find()){
 					String id = ms.group(1);
-					
-					System.out.println(ms.group(1));
+					System.out.println(fn);
+					//System.out.println(ms.group(1));
 				}
 				
 				rin.writeFile(OUT, nc);
 				
 				//
-				System.out.println(fn);
+				
 				
 				
 			}else{
 				for (String line : lines){
-					if (line.contains("<annotator id=\"aers51_Instance_140121\"")){
-						line = line.replace("aers51_Instance_140121", "aers51_Instance_170000");
-					}else{
-						line = line.replace("aers51_Instance_", "aers51_zuofeng_Instance_");
+					if (annotatorName.equals("Zuofeng")){
+						if (line.contains("Nadya Frid, UWM") || line.contains("Zuofeng Li, UW-Milwaukee") ){
+							line = "<annotator id=\"aers51_Instance_40000\">Zuofeng Li, uwm</annotator>";
+						}
+					}
+					
+					if(annotatorName.equals("Nadya")){
+						if (line.contains("Nadya Frid, uwm")){
+							line = "<annotator id=\"aers51_Instance_40001\">Nadya Frid, UWM</annotator>";
+						}
+					}
+					
+					
+					if (!line.contains("<annotator id=")){
+						
+						line = line.replace("aers51_Instance_", "aers51_" + annotatorName +"_" + biasName + "_" + "_Instance_");
 					}
 					System.out.println(line);
 					rin.writeLine(OUT, line);

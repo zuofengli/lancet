@@ -11,12 +11,12 @@
 	<classpathentry kind="lib" path="lib/jythonlib2.51.jar"/>
 	<classpathentry kind="lib" path="lib/Lib"/>
 	<classpathentry kind="lib" path="lib/junit-4.6.jar"/>
-	<classpathentry kind="lib" path="lib/mallet.jar" sourcepath="C:/tools/mallet-2.0.5/mallet-2.0.5/src"/>
 	<classpathentry kind="lib" path="lib/mallet-deps.jar"/>
 	<classpathentry kind="lib" path="lib/mallet04.jar" sourcepath="C:/tools/mallet-0.4/mallet-0.4/src"/>
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/Jama-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-2.9.3.jar"/>
+	<classpathentry kind="lib" path="lib/mallet.2.0rc06.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
