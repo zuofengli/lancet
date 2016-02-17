@@ -10,6 +10,6 @@ This is the source code for the paper "Lancet: a high precision medication event
 
 Code written in Java and Python.
 
-The paper could be accessed here: <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2995682/">Lancet: a high precision medication event extraction system for clinical text. J Am Med Inform Assoc. 2010 Sep-Oct; 17(5): 563–567.</a>
+The paper could be accessed here: <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2995682/" target="_blank">Lancet: a high precision medication event extraction system for clinical text. J Am Med Inform Assoc. 2010 Sep-Oct; 17(5): 563–567.</a>
 
 You could evaluate Lancet at my online demo at:/Not available now./
